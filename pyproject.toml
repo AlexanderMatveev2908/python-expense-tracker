@@ -22,4 +22,5 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.18.2"
 ruff = "^0.14.5"
+types-regex = "^2025.11.3.20251106"
 

@@ -86,9 +86,9 @@ class LibLog:
     def pretty_expenses(cls: Type["LibLog"], ctx: Ctx) -> None:
         cls.tab()
 
-        # if ctx.is_empty():
-        #     print("No expenses recorded yet.")
-        #     return
+        if ctx.is_empty():
+            print("No expenses recorded yet.")
+            return
 
         # ? 75 chars + 3 offset of bar on each col = 75 + 3 * 4
         DIVS_SPACE: int = 87

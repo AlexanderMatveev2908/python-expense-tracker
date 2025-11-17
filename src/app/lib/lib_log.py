@@ -1,7 +1,9 @@
+import datetime
 from typing import Type
 
-from app.lib.ctx import Expense
+from app.lib.ctx import Ctx, Expense
 from app.paperwork.tracker_opt import TrackerOpt
+from app.paperwork.types import Nullable
 
 
 class LibLog:
@@ -33,3 +35,85 @@ class LibLog:
         print(
             f"Expense added successfully: {new.desc} — {new.as_dollars()} — {new.date}"
         )
+
+    @classmethod
+    def desc_in_col(cls: Type["LibLog"], txt: str, width: int = 40) -> str:
+        words: list[str] = txt.split()
+        lines: list[str] = []
+        curr: str = ""
+
+        for w in words:
+            if len(curr) + len(w) + 1 > width:
+                lines.append(curr)
+                curr = w
+            else:
+                curr = w if curr == "" else curr + " " + w
+
+        if curr:
+            lines.append(curr)
+
+        return "\n".join(lines)
+
+    @classmethod
+    def __or_empty_str(cls: Type["LibLog"], arg: Nullable[str]) -> str:
+        return arg or ""
+
+    @classmethod
+    def print_row(
+        cls: Type["LibLog"],
+        header: bool = False,
+        *,
+        idx: str,
+        desc: str,
+        amount: str,
+        date: str,
+    ) -> None:
+        IDX_SPACE: int = 8
+        DESC_SPACE: int = 40
+        AMOUNT_SPACE: int = 12
+        DATE_SPACE: int = 20
+
+        B = "" if header else "| "
+        M = " " * 2 if header else ""
+
+        print(
+            f"{cls.__or_empty_str(idx):<{IDX_SPACE}}{B}"
+            f"{M}{cls.__or_empty_str(desc):<{DESC_SPACE}}{B}"
+            f"{M}{cls.__or_empty_str(amount):<{AMOUNT_SPACE}}{B}"
+            f"{M}{cls.__or_empty_str(date):<{DATE_SPACE}}{B}"
+        )
+
+    @classmethod
+    def pretty_expenses(cls: Type["LibLog"], ctx: Ctx) -> None:
+        cls.tab()
+
+        # if ctx.is_empty():
+        #     print("No expenses recorded yet.")
+        #     return
+
+        DIVS_SPACE: int = 90
+
+        print(cls.div(DIVS_SPACE))
+        cls.print_row(
+            header=True,
+            idx="Index",
+            desc="Description",
+            amount="Amount",
+            date="Date",
+        )
+        print(cls.div(DIVS_SPACE))
+
+        for idx, exp in enumerate(ctx.expenses):
+            wrapped: list[str] = cls.desc_in_col(exp.desc).split("\n")
+
+            cls.print_row(
+                idx=" " * 4 + str(idx),
+                desc=wrapped[0],
+                amount=exp.as_dollars(),
+                date=str(exp.date),
+            )
+
+            for line in wrapped[1:]:
+                cls.print_row(idx="", desc=line, amount="", date="")
+
+            print("-" * DIVS_SPACE)

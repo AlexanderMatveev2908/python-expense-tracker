@@ -101,7 +101,7 @@ class Core:
                 LibLog.added_expense(new)
 
             case TrackerOpt.EXP:
-                ctx.get_expenses()
+                LibLog.pretty_expenses(ctx)
             case TrackerOpt.DEL:
                 pass
             case TrackerOpt.TOT:

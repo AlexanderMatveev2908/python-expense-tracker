@@ -14,15 +14,21 @@ class Expense:
 
 
 class Ctx:
-    expenses: list[Expense] = []
+    expenses: list[Expense] = [
+        Expense(
+            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis, itaque porro, earum enim illum illo commodi dolor aut, consequatur explicabo at ex hic dolore similique repellat error. Sapiente, fugiat debitis.",
+            25,
+            datetime.date(2025, 1, 1),
+        ),
+        Expense(
+            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis, itaque porro, earum enim illum illo commodi dolor aut, consequatur explicabo at ex hic dolore similique repellat error. Sapiente, fugiat debitis.",
+            25,
+            datetime.date(2025, 1, 1),
+        ),
+    ]
 
     def is_empty(self: "Ctx") -> bool:
         return not self.expenses
-
-    def get_expenses(self: Self) -> None:
-        if self.is_empty():
-            print("No expenses recorded yet.")
-            return
 
     def add(self: Self, new: Expense) -> None:
         self.expenses.append(new)

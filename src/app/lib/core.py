@@ -140,10 +140,11 @@ class Core:
                     removed = ctx.delByIdx(arg)
                 else:
                     removed = ctx.delByDesc(arg)
-                if not removed:
-                    LibLog.not_found_notice()
 
-                LibLog.deleted_notice()
+                if removed:
+                    LibLog.deleted_notice()
+                else:
+                    LibLog.not_found_notice()
 
             case TrackerOpt.TOT:
                 if ctx.is_empty():

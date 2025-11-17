@@ -2,6 +2,7 @@ import datetime
 from typing import Type
 
 from app.lib.ctx import Ctx, Expense
+from app.lib.prs import LibPrs
 from app.paperwork.tracker_opt import TrackerOpt
 from app.paperwork.types import Nullable
 
@@ -33,7 +34,7 @@ class LibLog:
     def added_expense(cls: Type["LibLog"], new: Expense) -> None:
         cls.tab()
         print(
-            f"Expense added successfully: {new.desc} — {new.as_dollars()} — {new.date}"
+            f"Expense added successfully: {new.desc} — {LibPrs.as_dollars(new.amount)} — {new.date}"
         )
 
     @classmethod
@@ -83,12 +84,20 @@ class LibLog:
         )
 
     @classmethod
+    def notice_empty(
+        cls: Type["LibLog"],
+    ) -> None:
+        print("No expenses recorded yet.")
+        return
+
+    @classmethod
+    def log_total(cls: Type["LibLog"], arg: float) -> None:
+        cls.tab()
+        print(f"Total expenses: {LibPrs.as_dollars(arg)}")
+
+    @classmethod
     def pretty_expenses(cls: Type["LibLog"], ctx: Ctx) -> None:
         cls.tab()
-
-        if ctx.is_empty():
-            print("No expenses recorded yet.")
-            return
 
         # ? 75 chars + 3 offset of bar on each col = 75 + 3 * 4
         DIVS_SPACE: int = 87
@@ -109,7 +118,7 @@ class LibLog:
             cls.print_row(
                 idx=str(idx),
                 desc=wrapped[0],
-                amount=exp.as_dollars(),
+                amount=LibPrs.as_dollars(exp.amount),
                 date=str(exp.date),
             )
 
@@ -117,3 +126,14 @@ class LibLog:
                 cls.print_row(idx="", desc=line, amount="", date="")
 
             print("-" * DIVS_SPACE)
+
+            cls.tab()
+            print(f"Total: {LibPrs.as_dollars(ctx.acc_total())}")
+
+    @classmethod
+    def not_found_notice(cls: Type["LibLog"]) -> None:
+        print("404 • expense not found")
+
+    @classmethod
+    def deleted_notice(cls: Type["LibLog"]) -> None:
+        print("Expense deleted successfully")

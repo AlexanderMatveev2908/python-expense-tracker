@@ -2,6 +2,8 @@ from dataclasses import dataclass
 import datetime
 from typing import Self
 
+from app.paperwork.types import Nullable
+
 
 @dataclass
 class Expense:
@@ -9,26 +11,34 @@ class Expense:
     amount: float
     date: datetime.date
 
-    def as_dollars(self: Self) -> str:
-        return f"${self.amount:.2f}"
-
 
 class Ctx:
-    expenses: list[Expense] = [
-        Expense(
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis, itaque porro, earum enim illum illo commodi dolor aut, consequatur explicabo at ex hic dolore similique repellat error. Sapiente, fugiat debitis.",
-            25,
-            datetime.date(2025, 1, 1),
-        ),
-        Expense(
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis, itaque porro, earum enim illum illo commodi dolor aut, consequatur explicabo at ex hic dolore similique repellat error. Sapiente, fugiat debitis.",
-            25,
-            datetime.date(2025, 1, 1),
-        ),
-    ]
+    expenses: list[Expense] = []
 
     def is_empty(self: "Ctx") -> bool:
         return not self.expenses
 
     def add(self: Self, new: Expense) -> None:
         self.expenses.append(new)
+
+    def delByIdx(self: Self, target: int) -> Nullable[Expense]:
+        for idx, x in enumerate(self.expenses):
+            if idx == target:
+                self.expenses.remove(x)
+                return x
+        return None
+
+    def delByDesc(self, target: str) -> Nullable[Expense]:
+        for x in self.expenses:
+            if x.desc == target:
+                self.expenses.remove(x)
+                return x
+        return None
+
+    def acc_total(self: Self) -> float:
+        acc: float = 0
+
+        for x in self.expenses:
+            acc += x.amount
+
+        return acc

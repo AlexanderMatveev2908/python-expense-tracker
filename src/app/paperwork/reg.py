@@ -10,6 +10,7 @@ class Reg:
         r"^\s*[" + ("".join(emoji.EMOJI_DATA.keys())) + r"]"
     )
     __txt: regex.Pattern[str] = regex.compile(r"^[\p{L}\d\s\-'\"_.,;!?]{1,100}$")
+    __int: re.Pattern[str] = re.compile(r"\d+")
 
     @classmethod
     def starts_with_emj(cls: type["Reg"], txt: str) -> bool:
@@ -18,3 +19,7 @@ class Reg:
     @classmethod
     def txt_ok(cls: Type["Reg"], arg: str) -> bool:
         return cls.__txt.match(arg) is not None
+
+    @classmethod
+    def is_int(cls: Type["Reg"], arg: str) -> bool:
+        return cls.__int.match(arg) is not None

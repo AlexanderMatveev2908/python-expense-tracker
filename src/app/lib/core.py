@@ -7,7 +7,7 @@ from app.lib.dev.error import ErrApp
 from app.lib.lib_log import LibLog
 from app.paperwork.reg import Reg
 from app.paperwork.tracker_opt import TrackerOpt
-from app.paperwork.types import T
+from app.paperwork.types import T, Nullable
 
 
 class Core:
@@ -24,7 +24,7 @@ class Core:
             try:
                 res: T = cb()
 
-                if res:
+                if res is not None:
                     return res
             except Exception as err:
                 msg: str
@@ -74,13 +74,36 @@ class Core:
         return cls.__in_loop(cb, "invalid date")
 
     @classmethod
+    def __get_idx_or_desc(cls: Type["Core"], ctx: Ctx) -> str | int:
+        msg_err: str = "arg is neither a valid integer nor string"
+
+        def cb() -> str | int:
+            arg: str = input("Enter index or description to delete: ").strip()
+
+            try:
+                as_int: int = int(arg)
+                if as_int < 0 or (as_int and as_int >= len(ctx.expenses)):
+                    raise ErrApp("index out of range")
+
+                return as_int
+            except Exception as err:
+                if isinstance(err, ErrApp):
+                    raise err
+                elif Reg.txt_ok(arg):
+                    return arg
+                else:
+                    raise ErrApp(msg_err)
+
+        return cls.__in_loop(cb, msg_err)
+
+    @classmethod
     def main_choice(cls: Type["Core"]) -> TrackerOpt:
         msg_err: str = "invalid choice, enter a number between 1 and 5 inclusive"
 
         def cb() -> TrackerOpt:
             ch: str = input("Enter your choice (1-5): ").lower().strip()
             as_int: int = int(ch)
-            if 1 > as_int > 5:
+            if not 1 <= as_int <= 5:
                 raise ErrApp(msg_err)
             parsed: TrackerOpt = TrackerOpt.from_int(as_int - 1)
 
@@ -101,10 +124,33 @@ class Core:
                 LibLog.added_expense(new)
 
             case TrackerOpt.EXP:
+                if ctx.is_empty():
+                    LibLog.notice_empty()
+                    return
+
                 LibLog.pretty_expenses(ctx)
             case TrackerOpt.DEL:
-                pass
+                if ctx.is_empty():
+                    LibLog.notice_empty()
+                    return
+
+                arg: str | int = cls.__get_idx_or_desc(ctx)
+                removed: Nullable[Expense]
+                if isinstance(arg, int):
+                    removed = ctx.delByIdx(arg)
+                else:
+                    removed = ctx.delByDesc(arg)
+                if not removed:
+                    LibLog.not_found_notice()
+
+                LibLog.deleted_notice()
+
             case TrackerOpt.TOT:
-                pass
+                if ctx.is_empty():
+                    LibLog.notice_empty()
+                    return
+
+                LibLog.log_total(ctx.acc_total())
+
             case TrackerOpt.QUIT:
                 cls.bye()

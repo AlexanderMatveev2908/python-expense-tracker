@@ -82,7 +82,7 @@ class Core:
 
             try:
                 as_int: int = int(arg)
-                if as_int < 0 or (as_int and as_int >= len(ctx.expenses)):
+                if as_int < 0 or as_int >= len(ctx.expenses):
                     raise ErrApp("index out of range")
 
                 return as_int

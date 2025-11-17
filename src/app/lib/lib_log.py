@@ -1,5 +1,6 @@
 from typing import Type
 
+from app.lib.ctx import Expense
 from app.paperwork.tracker_opt import TrackerOpt
 
 
@@ -25,3 +26,10 @@ class LibLog:
         all_options: str = "\n".join([x.txt_of() for x in TrackerOpt])
         print(all_options)
         print(cls.div(len(title)))
+
+    @classmethod
+    def added_expense(cls: Type["LibLog"], new: Expense) -> None:
+        cls.tab()
+        print(
+            f"Expense added successfully: {new.desc} — {new.as_dollars()} — {new.date}"
+        )

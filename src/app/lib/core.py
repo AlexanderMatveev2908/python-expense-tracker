@@ -1,32 +1,29 @@
 import sys
 from typing import Type
 
+from app.lib.dev.error import ErrApp
+from app.lib.lib_log import LibLog
 from app.paperwork.tracker_opt import TrackerOpt
 
 
 class Core:
-    @classmethod
-    def tab(cls: Type["Core"]) -> None:
-        print("\t")
-
-    @classmethod
-    def div(cls: Type["Core"], n: int) -> str:
-        return "=" * n
-
-    @classmethod
-    def intro(cls: Type["Core"]) -> None:
-        print("Welcome to the Expense Tracker CLI!")
 
     @classmethod
     def bye(cls: Type["Core"]) -> None:
-        cls.tab()
+        LibLog.tab()
         print("✌🏼 bye")
         sys.exit(0)
 
     @classmethod
-    def options(cls: Type["Core"]) -> None:
-        cls.tab()
-        print(f"{cls.div(3)} Expense Tracker Menu {cls.div(3)}")
+    def main_choice(cls: Type["Core"]) -> TrackerOpt:
+        while True:
+            try:
+                ch: str = input("Enter your choice (1-5): ").lower().strip()
+                as_int: int = int(ch)
+                if 1 > as_int > 5:
+                    raise ErrApp("_")
+                parsed: TrackerOpt = TrackerOpt.from_int(as_int - 1)
 
-        all_options: str = "\n".join([x.txt_of() for x in TrackerOpt])
-        print(all_options)
+                return parsed
+            except Exception:
+                ErrApp.err_log("invalid choice")

@@ -87,6 +87,7 @@ class LibLog:
     def notice_empty(
         cls: Type["LibLog"],
     ) -> None:
+        cls.tab()
         print("No expenses recorded yet.")
         return
 
@@ -132,8 +133,10 @@ class LibLog:
 
     @classmethod
     def not_found_notice(cls: Type["LibLog"]) -> None:
+        cls.tab()
         print("404 • expense not found")
 
     @classmethod
     def deleted_notice(cls: Type["LibLog"]) -> None:
+        cls.tab()
         print("Expense deleted successfully")

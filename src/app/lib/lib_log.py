@@ -37,7 +37,7 @@ class LibLog:
         )
 
     @classmethod
-    def desc_in_col(cls: Type["LibLog"], txt: str, width: int = 40) -> str:
+    def desc_in_col(cls: Type["LibLog"], txt: str, width: int = 35) -> str:
         words: list[str] = txt.split()
         lines: list[str] = []
         curr: str = ""
@@ -68,19 +68,18 @@ class LibLog:
         amount: str,
         date: str,
     ) -> None:
-        IDX_SPACE: int = 8
-        DESC_SPACE: int = 40
-        AMOUNT_SPACE: int = 12
-        DATE_SPACE: int = 20
+        IDX_SPACE: int = 10
+        DESC_SPACE: int = 35
+        AMOUNT_SPACE: int = 15
+        DATE_SPACE: int = 15
 
-        B = "" if header else "| "
-        M = " " * 2 if header else ""
+        B = " | "
 
         print(
-            f"{cls.__or_empty_str(idx):<{IDX_SPACE}}{B}"
-            f"{M}{cls.__or_empty_str(desc):<{DESC_SPACE}}{B}"
-            f"{M}{cls.__or_empty_str(amount):<{AMOUNT_SPACE}}{B}"
-            f"{M}{cls.__or_empty_str(date):<{DATE_SPACE}}{B}"
+            f"{cls.__or_empty_str(idx):^{IDX_SPACE}}{B}"
+            f"{cls.__or_empty_str(desc):^{DESC_SPACE}}{B}"
+            f"{cls.__or_empty_str(amount):^{AMOUNT_SPACE}}{B}"
+            f"{cls.__or_empty_str(date):^{DATE_SPACE}}{B}"
         )
 
     @classmethod
@@ -91,7 +90,8 @@ class LibLog:
         #     print("No expenses recorded yet.")
         #     return
 
-        DIVS_SPACE: int = 90
+        # ? 75 chars + 3 offset of bar on each col = 75 + 3 * 4
+        DIVS_SPACE: int = 87
 
         print(cls.div(DIVS_SPACE))
         cls.print_row(
@@ -107,7 +107,7 @@ class LibLog:
             wrapped: list[str] = cls.desc_in_col(exp.desc).split("\n")
 
             cls.print_row(
-                idx=" " * 4 + str(idx),
+                idx=str(idx),
                 desc=wrapped[0],
                 amount=exp.as_dollars(),
                 date=str(exp.date),

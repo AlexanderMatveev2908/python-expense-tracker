@@ -128,8 +128,8 @@ class LibLog:
 
             print("-" * DIVS_SPACE)
 
-            cls.tab()
-            print(f"Total: {LibPrs.as_dollars(ctx.acc_total())}")
+        cls.tab()
+        print(f"Total: {LibPrs.as_dollars(ctx.acc_total())}")
 
     @classmethod
     def not_found_notice(cls: Type["LibLog"]) -> None:
